@@ -1,41 +1,39 @@
 package ru.yandex.group.filmorate;
 
 import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import ru.yandex.group.filmorate.controller.FilmController;
 import ru.yandex.group.filmorate.controller.UserController;
 import ru.yandex.group.filmorate.exception.ValidationException;
 import ru.yandex.group.filmorate.model.Film;
-import ru.yandex.group.filmorate.model.User;
+
 import static org.junit.jupiter.api.Assertions.*;
+
 import java.time.LocalDate;
 
 @SpringBootTest
-public class UserAndFilmTests {
-
+public class FilmTests {
+    @Autowired
+    private UserController userController;
     private final FilmController filmController = new FilmController();
-    private final UserController userController = new UserController();
-    private final Film film = new Film(1,"Железный человек","Тони старк: миллиардер, плейбой, филантроп. Во время представления" +
-            "очердного оружия попадает в плен, где разрабатывает свой костюм...", LocalDate.of(2008,5,1),128);
-    private final User user = new User(1,"ironMan@mail.ru","IronMan","Tony Stark",LocalDate.of(1965,4,4));
-
+    private final Film film = new Film(1,"Железный человек", "Тони старк: миллиардер, плейбой, филантроп. Во время представления" +
+            "очердного оружия попадает в плен, где разрабатывает свой костюм...", LocalDate.of(2008, 5, 1), 128);
     @Test
-    void creatFilmTest(){
+    void creatFilmTest() {
         filmController.create(film);
-        assertFalse(filmController.findFilms().isEmpty(),"Фильм не найден");
+        assertFalse(filmController.findFilms().isEmpty(), "Фильм не найден");
     }
-
     @Test
-    void updateFilmTest(){
-        Film film1 = new Film(1,"Железный человек2","В этой части железный человек сразится с электрическим утырком" +
-                ", смотрите на всех диванах страны", LocalDate.of(2010,4,29),130);
+    void updateFilmTest() {
+        Film film1 = new Film(1,"Железный человек2", "В этой части железный человек сразится с электрическим утырком" +
+                ", смотрите на всех диванах страны", LocalDate.of(2010, 4, 29), 130);
         filmController.create(film);
         filmController.update(film1);
-        assertEquals("Железный человек2",filmController.findFilms().get(1).getName(), "Фильм не обновился");
+        assertEquals("Железный человек2", filmController.findFilms().get(0).getName(), "Фильм не обновился");
     }
-
     @Test
-    void description200Test(){
+    void description200Test() {
         film.setDescription("«Желе́зный челове́к» (англ. Iron Man) — американский супергеройский фильм 2008 года " +
                 "режиссёра Джона Фавро с Робертом Дауни-младшим в главной роли. Сценарий написали Арт Маркам и Мэтт " +
                 "Холлоуэй и Марк Фергус и Хоук Остби по комиксам Marvel о приключениях супергероя Железного " +
@@ -59,46 +57,14 @@ public class UserAndFilmTests {
                 "звуковой монтаж» и «Лучшие визуальные эффекты».");
         assertThrows(ValidationException.class, () -> filmController.create(film));
     }
-
     @Test
-    void durationFilmTest(){
+    void durationFilmTest() {
         film.setDuration(-10);
         assertThrows(ValidationException.class, () -> filmController.create(film));
     }
     @Test
-    void dateFilmTest(){
-        film.setReleaseDate(LocalDate.of(1650,11,11));
+    void dateFilmTest() {
+        film.setReleaseDate(LocalDate.of(1650, 11, 11));
         assertThrows(ValidationException.class, () -> filmController.create(film));
-    }
-    @Test
-    void creatUserTest(){
-        userController.create(user);
-        assertFalse(userController.findUsers().isEmpty(),"Пользователь не найден");
-    }
-
-    @Test
-    void updateUserTest(){
-       User user1 = new User(1,"ironMan@mail.ru","IronVlad","Tony Stark",LocalDate.of(1965,4,4));
-       userController.create(user);
-       userController.update(user1);
-       assertEquals("IronVlad",userController.findUsers().get(1).getLogin(), "Юзер не обновился");
-    }
-
-    @Test
-    void emailTest() {
-        user.setEmail("emailWithout dog");
-        assertThrows(ValidationException.class, () -> userController.create(user));
-    }
-
-    @Test
-    void nullLoginTest(){
-        user.setLogin("loginWithout space");
-        assertThrows(ValidationException.class, () -> userController.create(user));
-    }
-
-    @Test
-    void birthdayFutureTest(){
-        user.setBirthday(LocalDate.of(2040,11,11));
-        assertThrows(ValidationException.class, () -> userController.create(user));
     }
 }

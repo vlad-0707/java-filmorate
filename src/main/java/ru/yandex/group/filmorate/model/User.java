@@ -12,8 +12,7 @@ import java.time.LocalDate;
 @Data
 @AllArgsConstructor
 public class User {
-    private int id;
-
+    private long id;
     @Email
     private String email;
 
