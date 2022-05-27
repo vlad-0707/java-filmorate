@@ -48,10 +48,10 @@ public class UserController {
     @PutMapping("{id}/friends/{friendId}")
     public User addFriends(@PathVariable Long id,
                            @PathVariable Long friendId){
-        if (id == null){
+        if (id == 0){
             throw new NotRightRequestException("Не корректный id:");
         }
-        if (friendId == null){
+        if (friendId == 0){
             throw new NotRightRequestException("Не корректный id:");
         }
        return userService.addToUsersFriend(id, friendId);
@@ -71,7 +71,7 @@ public class UserController {
 
     @GetMapping("{id}/friends")
     public List<User> getAllFriends(@PathVariable Long id){
-        if(id == null){
+        if(id <= 0){
             throw new UserNotFoundException("Такого пользователя с id " + id +" нет");
         }
         return userService.getFriend(id);
@@ -80,10 +80,10 @@ public class UserController {
     @GetMapping("{id}/friends/common/{otherId}")
     public List<User> getAllCommonFriendsById(@PathVariable  Long id,
                                               @PathVariable  Long otherId){
-        if(id == null){
+        if(id <= 0){
             throw new UserNotFoundException("Не нашелся пользователь");
         }
-        if(otherId == null){
+        if(otherId <= 0){
             throw new UserNotFoundException("Не нашелся пользователь");
         }
         return userService.getUsersFriend(id,otherId);
