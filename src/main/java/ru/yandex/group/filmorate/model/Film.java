@@ -1,21 +1,35 @@
 package ru.yandex.group.filmorate.model;
-
 import lombok.AllArgsConstructor;
 import lombok.Data;
 
-import javax.validation.constraints.*;
-
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.PastOrPresent;
+import javax.validation.constraints.Positive;
+import javax.validation.constraints.Size;
 import java.time.LocalDate;
+import java.util.HashSet;
+import java.util.Set;
 
 @Data
 @AllArgsConstructor
 public class Film {
 
-    private long id;
+    public Film() {
+        filmLikes = new HashSet<>();
+    }
+
+    public void addLike(Long id) {
+        filmLikes.add(id);
+    }
+
+    public void deleteLike(Long id) {
+        filmLikes.remove(id);
+    }
+    private Long id;
     @NotBlank
     private String name;
 
-    @Size(min = 1, max = 200)
+    @Size(max = 200)
     private String description;
 
     @PastOrPresent
@@ -23,4 +37,5 @@ public class Film {
 
     @Positive
     private int duration;
+    private Set<Long> filmLikes;
 }
