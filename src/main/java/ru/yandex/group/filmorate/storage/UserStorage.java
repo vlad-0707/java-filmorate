@@ -18,7 +18,4 @@ public interface UserStorage {
 
      User update(@Valid @RequestBody User user);
 
-     void validateUser(User user);
-     Optional<User> getUserById(Long id);
-
 }

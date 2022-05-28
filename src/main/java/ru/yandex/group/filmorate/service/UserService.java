@@ -1,6 +1,5 @@
 package ru.yandex.group.filmorate.service;
 
-import com.sun.jdi.connect.VMStartException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -9,8 +8,9 @@ import ru.yandex.group.filmorate.exception.ValidationException;
 import ru.yandex.group.filmorate.model.User;
 import ru.yandex.group.filmorate.storage.UserStorage;
 
+import java.time.LocalDate;
 import java.util.*;
-import java.util.stream.Collectors;
+
 
 @Service
 @Slf4j
@@ -23,12 +23,17 @@ public class UserService {
     }
 
     public User createUser(User user){
+        validateUser(user);
         User newUser = userStorage.create(user);
         log.info("Пользователь {} добавлен в список.", user.getLogin());
         return newUser;
     }
 
     public User updateUser(User user){
+        if (user.getId()<=0) {
+            throw new UserNotFoundException("Пользователь с id:" + user.getId() + " не найден");
+        }
+        validateUser(user);
         userStorage.update(user);
         log.info("Информация о пользователе {} обновлена", user.getLogin());
         return user;
@@ -91,5 +96,20 @@ public class UserService {
             }
         }
         return friendsNew;
+    }
+
+    public void validateUser(User user) {
+        if (user.getEmail().contains(" ") || !user.getEmail().contains("@")) {
+            throw new ValidationException("Электронная почта не может быть пустой и должна содержать символ @!");
+        }
+        if (user.getLogin().isBlank() || user.getLogin().contains(" ")) {
+            throw new ValidationException("Логин не может быть пустым и содержать пробелы!");
+        }
+        if (Objects.isNull(user.getName()) || user.getName().isBlank()) {
+            user.setName(user.getLogin());
+        }
+        if (user.getBirthday().isAfter(LocalDate.now())) {
+            throw new ValidationException("Дня рождения не может быть из будущего, только если Вы не Марти Макфлай");
+        }
     }
 }

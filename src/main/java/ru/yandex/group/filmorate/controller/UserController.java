@@ -48,44 +48,23 @@ public class UserController {
     @PutMapping("{id}/friends/{friendId}")
     public User addFriends(@PathVariable Long id,
                            @PathVariable Long friendId){
-        if (id == 0){
-            throw new NotRightRequestException("Не корректный id:");
-        }
-        if (friendId == 0){
-            throw new NotRightRequestException("Не корректный id:");
-        }
-       return userService.addToUsersFriend(id, friendId);
+        return userService.addToUsersFriend(id, friendId);
     }
 
     @DeleteMapping ("{id}/friends/{friendId}")
     public User deleteFriends(@PathVariable Long id,
                               @PathVariable Long friendId){
-        if (id <= 0){
-            throw new ValidationException("id не может быть отрицательный или равным 0");
-        }
-        if (friendId <= 0){
-            throw new ValidationException("id не может быть отрицательный или равным 0");
-        }
         return userService.deleteFromUsersFriend(id, friendId);
     }
 
     @GetMapping("{id}/friends")
     public List<User> getAllFriends(@PathVariable Long id){
-        if(id <= 0){
-            throw new UserNotFoundException("Такого пользователя с id " + id +" нет");
-        }
         return userService.getFriend(id);
     }
 
     @GetMapping("{id}/friends/common/{otherId}")
     public List<User> getAllCommonFriendsById(@PathVariable  Long id,
                                               @PathVariable  Long otherId){
-        if(id <= 0){
-            throw new UserNotFoundException("Не нашелся пользователь");
-        }
-        if(otherId <= 0){
-            throw new UserNotFoundException("Не нашелся пользователь");
-        }
         return userService.getUsersFriend(id,otherId);
     }
 }

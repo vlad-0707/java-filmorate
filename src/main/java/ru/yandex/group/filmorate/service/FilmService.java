@@ -2,9 +2,16 @@ package ru.yandex.group.filmorate.service;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import org.springframework.validation.annotation.Validated;
+import ru.yandex.group.filmorate.exception.FilmNotFoundException;
+import ru.yandex.group.filmorate.exception.NotRightRequestException;
+import ru.yandex.group.filmorate.exception.ValidationException;
 import ru.yandex.group.filmorate.model.Film;
 import ru.yandex.group.filmorate.storage.FilmStorage;
+import java.time.LocalDate;
 import java.util.List;
+import java.util.Objects;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Slf4j
@@ -21,11 +28,16 @@ public class FilmService {
     }
 
     public void createFilm(Film film){
+        validateFilm(film);
         filmStorage.create(film);
         log.info("Фильм {} добавлен",film.getName());
     }
 
     public void updateFilm(Film film){
+        if(film.getId() <= 0) {
+            throw new FilmNotFoundException("id не может быть отрицательный или равным 0");
+        }
+        validateFilm(film);
         filmStorage.update(film);
         log.info("Фильм {} обновлен", film.getName());
     }
@@ -34,19 +46,26 @@ public class FilmService {
         log.info("Фильм {} удален",film.getName());
         return filmStorage.delete(film);
     }
-    public Film getFilm( Long id) {
-       Film film = filmStorage.findFilmsById(id);
-       log.info("Фильм {} найден",film.getName());
-       return filmStorage.findFilmsById(id);
+
+    public Optional<Film> getFilms(Long id) {
+        Film film = filmStorage.findFilmById(id).orElseThrow(() -> new FilmNotFoundException("Фильм не найден"));
+        log.info("Фильм {} найден", film.getName());
+        return filmStorage.findFilmById(id);
     }
+
     public void addLike(Long id, Long userId) {
-        filmStorage.findFilmsById(id).addLike(userId);
-        log.info("Фильму {} добавлен лайк", filmStorage.findFilmsById(id).getName());
+        filmStorage.findFilmById(id).map(x -> {x.addLike(userId); return true;})
+                   .orElseThrow(()-> new FilmNotFoundException("id не может быть отрицательным!"));
+        log.info("Фильму {} добавлен лайк", filmStorage.findFilmById(id).map(Film::getName));
     }
 
     public void deleteLike(Long id, Long userId) {
-        filmStorage.findFilmsById(id).deleteLike(userId);
-        log.info("У фильма {} удален лайк", filmStorage.findFilmsById(id).getName());
+        if (id < 0 || userId < 0) {
+            throw new FilmNotFoundException("id не может быть отрицательным!");
+        }
+        filmStorage.findFilmById(id).map(x -> {x.deleteLike(userId); return true;})
+                   .orElseThrow(()-> new FilmNotFoundException("id не может быть отрицательным!"));
+        log.info("У фильма {} удален лайк", filmStorage.findFilmById(id).map(Film::getName));
     }
 
     public List<Film> getPopularFilms(Long count) {
@@ -57,5 +76,19 @@ public class FilmService {
 
         log.info("Самые популярные фильмы {}",popularFilm);
         return popularFilm;
+    }
+    private void validateFilm(Film film) throws ValidationException {
+        if (Objects.isNull(film.getName()) || film.getName().isBlank()) {
+            throw new ValidationException("Название у фильма должно быть");
+        }
+        if (film.getDescription().length() > 200 || film.getDescription().length() == 0) {
+            throw new ValidationException("Слишком длинное описание");
+        }
+        if (film.getReleaseDate().isBefore(LocalDate.of(1895, 12, 28))) {
+            throw new ValidationException("День рождения кино 28 декабря 1895 года, раньше фильмов не знаем");
+        }
+        if (film.getDuration() < 0) {
+            throw new ValidationException("Продолжительность фильма не может быть отрицательной");
+        }
     }
 }

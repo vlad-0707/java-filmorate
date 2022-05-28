@@ -1,20 +1,20 @@
 package ru.yandex.group.filmorate.storage;
 import org.springframework.stereotype.Component;
 import ru.yandex.group.filmorate.exception.FilmNotFoundException;
-import ru.yandex.group.filmorate.exception.ValidationException;
 import ru.yandex.group.filmorate.model.Film;
 import ru.yandex.group.filmorate.model.Identifier;
-
-
-import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Objects;
+import java.util.Optional;
 
 @Component
 public class InMemoryFilmStorage implements FilmStorage {
     private final HashMap<Long, Film> films = new HashMap<>();
-    Identifier identifier = new Identifier();
+    private final Identifier identifier;
+
+    public InMemoryFilmStorage(Identifier identifier) {
+        this.identifier = identifier;
+    }
 
     @Override
     public ArrayList<Film> findFilms() {
@@ -23,14 +23,12 @@ public class InMemoryFilmStorage implements FilmStorage {
 
     @Override
     public Film create(Film film) {
-        validateFilm(film);
         film.setId(identifier.getId());
         return films.put(film.getId(), film);
     }
 
     @Override
     public Film update(Film film) {
-        validateFilm(film);
         return films.put(film.getId(), film);
     }
 
@@ -40,22 +38,8 @@ public class InMemoryFilmStorage implements FilmStorage {
     }
 
     @Override
-    public Film findFilmsById(long id) {
-        return films.get(id);
+    public Optional<Film> findFilmById(long id) {
+        return Optional.ofNullable(films.get(id));
     }
 
-    private void validateFilm(Film film) throws ValidationException {
-        if (Objects.isNull(film.getName()) || film.getName().isBlank()) {
-            throw new ValidationException("Название у фильма должно быть");
-        }
-        if (film.getDescription().length() > 200 || film.getDescription().length() == 0) {
-            throw new ValidationException("Слишком длинное описание");
-        }
-        if (film.getReleaseDate().isBefore(LocalDate.of(1895, 12, 28))) {
-            throw new ValidationException("День рождения кино 28 декабря 1895 года, раньше фильмов не знаем");
-        }
-        if (film.getDuration() < 0) {
-            throw new ValidationException("Продолжительность фильма не может быть отрицательной");
-        }
-    }
 }

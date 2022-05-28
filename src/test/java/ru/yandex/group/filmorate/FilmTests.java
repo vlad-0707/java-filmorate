@@ -5,6 +5,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import ru.yandex.group.filmorate.exception.ValidationException;
 import ru.yandex.group.filmorate.model.Film;
+import ru.yandex.group.filmorate.model.Identifier;
 import ru.yandex.group.filmorate.storage.InMemoryFilmStorage;
 
 
@@ -14,9 +15,10 @@ import java.time.LocalDate;
 import java.util.HashSet;
 
 @SpringBootTest
+
 public class FilmTests {
     @Autowired
-    private final InMemoryFilmStorage inMemoryFilmStorage = new InMemoryFilmStorage();
+    private final InMemoryFilmStorage inMemoryFilmStorage = new InMemoryFilmStorage(new Identifier());
     private final Film film = new Film(1L,"Железный человек", "Тони старк: миллиардер, плейбой, филантроп. Во время представления" +
             "очердного оружия попадает в плен, где разрабатывает свой костюм...", LocalDate.of(2008, 5, 1), 128,new HashSet<>());
     @Test

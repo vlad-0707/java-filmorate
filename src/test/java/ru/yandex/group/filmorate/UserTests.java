@@ -3,6 +3,7 @@ package ru.yandex.group.filmorate;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 import ru.yandex.group.filmorate.exception.ValidationException;
+import ru.yandex.group.filmorate.model.Identifier;
 import ru.yandex.group.filmorate.model.User;
 import ru.yandex.group.filmorate.storage.InMemoryUserStorage;
 
@@ -14,7 +15,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 
 @SpringBootTest
 public class UserTests {
-    private final InMemoryUserStorage inMemoryUserStorage = new InMemoryUserStorage();
+    private final InMemoryUserStorage inMemoryUserStorage = new InMemoryUserStorage(new Identifier());
     private final User user = new User(1,"ironMan@mail.ru","IronMan","Tony Stark", LocalDate.of(1965,4,4),new TreeSet<>());
     @Test
     void creatUserTest(){
