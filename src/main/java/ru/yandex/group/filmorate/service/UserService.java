@@ -11,7 +11,6 @@ import ru.yandex.group.filmorate.storage.UserStorage;
 import java.time.LocalDate;
 import java.util.*;
 
-
 @Service
 @Slf4j
 public class UserService {
@@ -30,19 +29,18 @@ public class UserService {
     }
 
     public User updateUser(User user){
-        if (user.getId()<=0) {
-            throw new UserNotFoundException("Пользователь с id:" + user.getId() + " не найден");
-        }
+        getUserById(user.getId());
         validateUser(user);
         userStorage.update(user);
         log.info("Информация о пользователе {} обновлена", user.getLogin());
         return user;
     }
 
-    public User getUserId(Long id){
-        User user = userStorage.findUserById(id);
+    public User getUserById(Long id){
+        User user = userStorage.findUsersById(id)
+                .orElseThrow(()-> new UserNotFoundException("Пользователь не найден"));
         log.info("Пользователь найден {}",user.getName());
-        return userStorage.findUserById(id);
+        return user;
     }
 
     public List<User> getUsers(){
@@ -50,9 +48,8 @@ public class UserService {
     }
 
     public User addToUsersFriend(Long id, Long friendId){
-        User user = userStorage.findUserById(id);
-        User friend = userStorage.findUserById(friendId);
-
+        User user = getUserById(id);
+        User friend = getUserById(friendId);
         user.addToFriends(friendId);
         friend.addToFriends(id);
 
@@ -62,8 +59,8 @@ public class UserService {
     }
 
     public User deleteFromUsersFriend(Long id, Long friendId){
-        User user = userStorage.findUserById(id);
-        User friend = userStorage.findUserById(friendId);
+        User user = getUserById(id);
+        User friend = getUserById(friendId);
 
         user.deleteFromFriends(friendId);
         friend.deleteFromFriends(id);
@@ -74,11 +71,11 @@ public class UserService {
     }
 
     public List<User> getFriend(Long id) {
-        User user = userStorage.findUserById(id);
+        User user = getUserById(id);
         Set<Long> allFriendsID = user.getFriendsID();
         List<User> friends = new ArrayList<>();
         for(Long f : allFriendsID){
-            User friend = userStorage.findUserById(f);
+            User friend = getUserById(f);
             friends.add(friend);
         }
         log.info("У " + user.getName() + " друзья с id: " + user.getFriendsID());
@@ -88,11 +85,11 @@ public class UserService {
 
     public List<User> getUsersFriend(Long id, Long friendId){
         List<User> friendsNew = new ArrayList<>();
-        Set<Long> userOne = userStorage.findUserById(id).getFriendsID();
-        Set<Long> userTwo = userStorage.findUserById(friendId).getFriendsID();
+        Set<Long> userOne = getUserById(id).getFriendsID();
+        Set<Long> userTwo = getUserById(friendId).getFriendsID();
         for(Long f : userOne){
             if (userTwo.contains(f)){
-                friendsNew.add(userStorage.findUserById(f));
+                friendsNew.add(getUserById(f));
             }
         }
         return friendsNew;

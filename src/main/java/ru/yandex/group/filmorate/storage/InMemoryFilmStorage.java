@@ -1,6 +1,5 @@
 package ru.yandex.group.filmorate.storage;
 import org.springframework.stereotype.Component;
-import ru.yandex.group.filmorate.exception.FilmNotFoundException;
 import ru.yandex.group.filmorate.model.Film;
 import ru.yandex.group.filmorate.model.Identifier;
 import java.util.ArrayList;
