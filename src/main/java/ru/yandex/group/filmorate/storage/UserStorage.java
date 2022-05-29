@@ -12,10 +12,8 @@ public interface UserStorage {
 
      List<User> findUsers();
 
-     User findUserById(Long id);
-
      User create(@Valid @RequestBody User user);
 
      User update(@Valid @RequestBody User user);
-
+     Optional<User> findUsersById(long id);
 }

@@ -2,70 +2,65 @@ package ru.yandex.group.filmorate.service;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
-import org.springframework.validation.annotation.Validated;
 import ru.yandex.group.filmorate.exception.FilmNotFoundException;
-import ru.yandex.group.filmorate.exception.NotRightRequestException;
+import ru.yandex.group.filmorate.exception.UserNotFoundException;
 import ru.yandex.group.filmorate.exception.ValidationException;
 import ru.yandex.group.filmorate.model.Film;
 import ru.yandex.group.filmorate.storage.FilmStorage;
+import ru.yandex.group.filmorate.storage.UserStorage;
+
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Objects;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Slf4j
 @Service
 public class FilmService {
     private final FilmStorage filmStorage;
+    private final UserStorage userStorage;
 
-    public FilmService(FilmStorage filmStorage) {
+    public FilmService(FilmStorage filmStorage, UserStorage userStorage) {
         this.filmStorage = filmStorage;
+        this.userStorage = userStorage;
     }
-
-    public List<Film> getAllFilms(){
+    public List<Film> getAllFilms() {
         return filmStorage.findFilms();
     }
 
-    public void createFilm(Film film){
+    public void createFilm(Film film) {
         validateFilm(film);
         filmStorage.create(film);
-        log.info("Фильм {} добавлен",film.getName());
+        log.info("Фильм {} добавлен", film.getName());
     }
 
-    public void updateFilm(Film film){
-        if(film.getId() <= 0) {
-            throw new FilmNotFoundException("id не может быть отрицательный или равным 0");
-        }
+    public void updateFilm(Film film) {
+        getFilmById(film.getId());
         validateFilm(film);
         filmStorage.update(film);
         log.info("Фильм {} обновлен", film.getName());
     }
 
-    public Film deleteFilm(Film film){
-        log.info("Фильм {} удален",film.getName());
+    public Film deleteFilm(Film film) {
+        log.info("Фильм {} удален", film.getName());
         return filmStorage.delete(film);
     }
 
-    public Optional<Film> getFilms(Long id) {
+    public Film getFilmById(Long id) {
         Film film = filmStorage.findFilmById(id).orElseThrow(() -> new FilmNotFoundException("Фильм не найден"));
         log.info("Фильм {} найден", film.getName());
-        return filmStorage.findFilmById(id);
+        return film;
     }
 
     public void addLike(Long id, Long userId) {
-        filmStorage.findFilmById(id).map(x -> {x.addLike(userId); return true;})
-                   .orElseThrow(()-> new FilmNotFoundException("id не может быть отрицательным!"));
-        log.info("Фильму {} добавлен лайк", filmStorage.findFilmById(id).map(Film::getName));
+        getFilmById(id).addLike(userId);
+        log.info("У фильма {} удален лайк", getFilmById(id).getName());
     }
 
-    public void deleteLike(Long id, Long userId) {
-        if (id < 0 || userId < 0) {
-            throw new FilmNotFoundException("id не может быть отрицательным!");
-        }
-        filmStorage.findFilmById(id).map(x -> {x.deleteLike(userId); return true;})
-                   .orElseThrow(()-> new FilmNotFoundException("id не может быть отрицательным!"));
-        log.info("У фильма {} удален лайк", filmStorage.findFilmById(id).map(Film::getName));
+    public void deleteLike(long id, long userId) {
+        userStorage.findUsersById(userId).orElseThrow(()->new UserNotFoundException("Пользователь не найден"));
+        getFilmById(id).deleteLike(userId);
+        log.info("У фильма {} удален лайк", getFilmById(id).getName());
     }
 
     public List<Film> getPopularFilms(Long count) {
@@ -74,9 +69,10 @@ public class FilmService {
                 .limit(count)
                 .collect(Collectors.toList());
 
-        log.info("Самые популярные фильмы {}",popularFilm);
+        log.info("Самые популярные фильмы {}", popularFilm);
         return popularFilm;
     }
+
     private void validateFilm(Film film) throws ValidationException {
         if (Objects.isNull(film.getName()) || film.getName().isBlank()) {
             throw new ValidationException("Название у фильма должно быть");

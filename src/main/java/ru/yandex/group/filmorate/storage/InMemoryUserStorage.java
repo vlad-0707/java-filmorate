@@ -1,7 +1,6 @@
 package ru.yandex.group.filmorate.storage;
 
 import org.springframework.stereotype.Component;
-import ru.yandex.group.filmorate.exception.UserNotFoundException;
 import ru.yandex.group.filmorate.model.Identifier;
 import ru.yandex.group.filmorate.model.User;
 import java.util.*;
@@ -21,15 +20,6 @@ public class InMemoryUserStorage implements UserStorage {
     }
 
     @Override
-    public User findUserById(Long id) {
-        User user = users.get(id);
-        if(user == null){
-            throw new UserNotFoundException("Пользователь с id: " + id + " не найден");
-        }
-        return users.get(id);
-    }
-
-    @Override
     public User create(User user) {
         user.setId(identifier.getId());
         users.put(user.getId(), user);
@@ -40,6 +30,10 @@ public class InMemoryUserStorage implements UserStorage {
     public User update(User user){
         users.put(user.getId(),user);
         return user;
+    }
+    @Override
+    public Optional<User> findUsersById(long id){
+        return Optional.ofNullable(users.get(id));
     }
 
 }

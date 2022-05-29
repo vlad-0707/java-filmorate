@@ -1,21 +1,16 @@
 package ru.yandex.group.filmorate.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
-import ru.yandex.group.filmorate.exception.FilmNotFoundException;
-import ru.yandex.group.filmorate.exception.ValidationException;
 import ru.yandex.group.filmorate.model.Film;
 import ru.yandex.group.filmorate.service.FilmService;
 
-
-
 import javax.validation.Valid;
-import javax.validation.constraints.Positive;
 import java.util.*;
 
 @RequestMapping("/films")
 @RestController
+
 public class FilmController {
     private final FilmService filmService;
 
@@ -29,8 +24,8 @@ public class FilmController {
         return filmService.getAllFilms();
     }
     @GetMapping("/{id}")
-    public Optional<Film> getFilm(@PathVariable Long id) {
-        return filmService.getFilms(id);
+    public Film getFilm(@PathVariable Long id) {
+        return filmService.getFilmById(id);
     }
 
     @PostMapping
@@ -56,7 +51,7 @@ public class FilmController {
     }
 
     @DeleteMapping("/{id}/like/{userId}")
-    public void deleteLike(@PathVariable Long id, @PathVariable Long userId) {
+    public void deleteLike(@PathVariable long id,@PathVariable long userId) {
         filmService.deleteLike(id, userId);
     }
 
