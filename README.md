@@ -18,23 +18,24 @@ public User create(@Valid @RequestBody User user) {
         return user;
         }
 ```
-```
-"C:\Users\Маша\Desktop\диаграмма.png"
-```
-# Запрос на все фильмы из таблицы
+
+
+![](../../Desktop/диаграмма.png)
+
+Запрос на все фильмы из таблицы
 ```
 SELECT *
 from films
 ```
 
-# Запрос на email и имя пользователя
+Запрос на email и имя пользователя
 ```
 SELECT u.email, 
 u.name
 FROM users AS u
 ```
 
-# Запрос на название жанра
+Запрос на название жанра
 ```
 SELECT g1.name AS genre
 FROM film_genre AS fg
@@ -43,7 +44,7 @@ INNER JOIN genre AS g1 ON fg.genre_id=g1.genre_id
 WHERE g1.name = 'Комедия'
 ```
 
-# Запрос на друзей пользователя
+Запрос на друзей пользователя
 ```
 SELECT u.user_id,
        u.email,
