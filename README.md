@@ -18,9 +18,7 @@ public User create(@Valid @RequestBody User user) {
         return user;
         }
 ```
-```
-"diagram.png"
-```
+![Диграмма Filmorate](../../Desktop/диаграмма.png)
 Запрос на все фильмы из таблицы
 ```
 SELECT *
