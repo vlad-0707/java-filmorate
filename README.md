@@ -18,10 +18,9 @@ public User create(@Valid @RequestBody User user) {
         return user;
         }
 ```
-
-
-![](../../Desktop/диаграмма.png)
-
+```
+"diagram.png"
+```
 Запрос на все фильмы из таблицы
 ```
 SELECT *
