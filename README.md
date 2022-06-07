@@ -19,7 +19,7 @@ public User create(@Valid @RequestBody User user) {
         }
 ```
 
-#Диаграмма Filmorate
+# Диаграмма Filmorate
 
 ![](diagram.png)
 
