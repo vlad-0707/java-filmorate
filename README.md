@@ -19,6 +19,8 @@ public User create(@Valid @RequestBody User user) {
         }
 ```
 
+#Диаграмма Filmorate
+
 ![](diagram.png)
 
 Запрос на все фильмы из таблицы
