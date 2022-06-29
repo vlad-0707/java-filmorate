@@ -95,7 +95,7 @@ public class FilmDbStorage implements FilmStorage {
     }
 
     @Override
-    public Film createFilm(Film film) {
+    public Film create(Film film) {
         validateFilm(film);
         String sqlQuery = "INSERT INTO films (name, description, release_date, duration, mpa_id) VALUES (?,?,?,?,?)";
         KeyHolder keyHolder = new GeneratedKeyHolder();
@@ -113,7 +113,7 @@ public class FilmDbStorage implements FilmStorage {
     }
 
     @Override
-    public Film updateFilm(Film film) {
+    public Film update(Film film) {
         checkFilm(film.getId());
         String sqlQuery = "UPDATE films SET name = ?," +
                 " description = ?," +
@@ -132,7 +132,7 @@ public class FilmDbStorage implements FilmStorage {
     }
 
     @Override
-    public void deleteFilm(Film film) {
+    public void delete(Film film) {
         checkFilm(film.getId());
         String sqlQuery = "DELETE FROM films WHERE film_id = ?";
         jdbcTemplate.update(sqlQuery, film.getId());

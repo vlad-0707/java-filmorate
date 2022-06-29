@@ -1,15 +1,11 @@
 package ru.yandex.group.filmorate.service;
 
-import lombok.extern.slf4j.Slf4j;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import ru.yandex.group.filmorate.exception.UserNotFoundException;
-import ru.yandex.group.filmorate.exception.ValidationException;
 import ru.yandex.group.filmorate.model.User;
 import ru.yandex.group.filmorate.storage.friendship.FriendshipStorage;
 import ru.yandex.group.filmorate.storage.users.UserStorage;
-
-import java.time.LocalDate;
 import java.util.*;
 
 @Service
@@ -23,15 +19,15 @@ public class UserService {
         this.friendshipStorage = friendshipStorage;
     }
 
-    public User createUser(User user) {
+    public User create(User user) {
         return userStorage.create(user);
     }
 
-    public User updateUser(User user) {
+    public User update(User user) {
         return userStorage.update(user);
     }
 
-    public void deleteUser(User user) {
+    public void delete(User user) {
         userStorage.delete(user);
     }
 

@@ -31,13 +31,13 @@ public class FilmController {
 
     @PostMapping
     public Film createFilm(@Valid @RequestBody Film film) {
-        filmService.createFilm(film);
+        filmService.create(film);
         return film;
     }
 
     @PutMapping
     public Film updateFilm(@Valid @RequestBody Film film) {
-        filmService.updateFilm(film);
+        filmService.update(film);
         return film;
     }
 

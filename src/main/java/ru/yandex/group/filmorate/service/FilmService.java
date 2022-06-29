@@ -5,20 +5,16 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import ru.yandex.group.filmorate.exception.FilmNotFoundException;
 import ru.yandex.group.filmorate.exception.UserNotFoundException;
-import ru.yandex.group.filmorate.exception.ValidationException;
 import ru.yandex.group.filmorate.model.Film;
 import ru.yandex.group.filmorate.model.Genre;
 import ru.yandex.group.filmorate.storage.film_genre.FilmGenreStorage;
 import ru.yandex.group.filmorate.storage.films.FilmStorage;
 import ru.yandex.group.filmorate.storage.genre.GenreStorage;
 import ru.yandex.group.filmorate.storage.likes_film.LikesFilmStorage;
-
-import java.time.LocalDate;
 import java.util.LinkedHashSet;
 import java.util.List;
-import java.util.Objects;
 import java.util.TreeSet;
-import java.util.stream.Collectors;
+
 
 @Service
 @Slf4j
@@ -55,8 +51,8 @@ public class FilmService {
         return filmStorage.getAll();
     }
 
-    public Film createFilm(Film film) {
-        Film filmToAdd = filmStorage.createFilm(film);
+    public Film create(Film film) {
+        Film filmToAdd = filmStorage.create(film);
         film.setId(filmToAdd.getId());
         if (film.getGenres() != null) {
             for (Genre g : film.getGenres()) {
@@ -67,10 +63,10 @@ public class FilmService {
         return film;
     }
 
-    public Film updateFilm(Film film) {
+    public Film update(Film film) {
         checkFilm(film.getId());
         filmGenreStorage.delete(film.getId());
-        filmStorage.updateFilm(film);
+        filmStorage.update(film);
         if (film.getGenres() != null) {
             for (Genre g : film.getGenres()) {
                 filmGenreStorage.add(film.getId(), g.getId());
@@ -81,7 +77,7 @@ public class FilmService {
     }
 
     public void deleteFilm(Long id) {
-        filmStorage.deleteFilm(filmStorage.getFilmById(id));
+        filmStorage.delete(filmStorage.getFilmById(id));
     }
 
     public Film getFilmById(Long id) {

@@ -103,7 +103,7 @@ class FilmorateApplicationTests {
         uc.createUser(userOne);
         userOne.setName("Updated");
         assertEquals("Updated", userOne.getName());
-        us.deleteUser(userOne);
+        us.delete(userOne);
     }
 
     @Test
@@ -112,8 +112,8 @@ class FilmorateApplicationTests {
         uc.createUser(userTwo);
         List<User> users = us.getUsers();
         assertEquals(3, users.size());
-        us.deleteUser(userOne);
-        us.deleteUser(userTwo);
+        us.delete(userOne);
+        us.delete(userTwo);
     }
 
     @Test
@@ -123,8 +123,8 @@ class FilmorateApplicationTests {
         us.addToUsersFriend(userOne.getId(), userTwo.getId());
         List<User> friendList = us.getFriend(userOne.getId());
         assertEquals(1, friendList.size());
-        us.deleteUser(userOne);
-        us.deleteUser(userTwo);
+        us.delete(userOne);
+        us.delete(userTwo);
     }
 
     @Test
@@ -134,8 +134,8 @@ class FilmorateApplicationTests {
         List<User> friendList = us.getFriend(1L);
         uc.deleteFriends(userOne.getId(), userTwo.getId());
         assertEquals(0, friendList.size());
-        us.deleteUser(userOne);
-        us.deleteUser(userTwo);
+        us.delete(userOne);
+        us.delete(userTwo);
     }
 
     @Test
@@ -159,9 +159,9 @@ class FilmorateApplicationTests {
         List<User> commonFriends = uc.getAllCommonFriendsById(userOne.getId(), userTwo.getId());
         assertEquals(1, commonFriends.size());
 
-        us.deleteUser(userThree);
-        us.deleteUser(userOne);
-        us.deleteUser(userTwo);
+        us.delete(userThree);
+        us.delete(userOne);
+        us.delete(userTwo);
     }
 
     @Test

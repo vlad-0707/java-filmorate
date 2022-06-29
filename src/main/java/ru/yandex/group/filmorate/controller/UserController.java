@@ -37,12 +37,12 @@ public class UserController {
 
     @PostMapping
     public User createUser(@Valid @RequestBody User user) {
-        return userService.createUser(user);
+        return userService.create(user);
     }
 
     @PutMapping
     public User updateUser(@Valid @RequestBody User user) {
-        return userService.updateUser(user);
+        return userService.update(user);
     }
 
     @PutMapping("{id}/friends/{friendId}")
